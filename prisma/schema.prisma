@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+type List {
+  id             String  @map("_id") @db.ObjectId
+  completed      Boolean @default(false)
+  completedCount Int
+  itemName       String
+  quantity       Int
+}
+
+type PlayerHistories {
+  id        String   @map("_id") @db.ObjectId
+  cached_at DateTime @db.Date
+  players   String
+}
+
+model Lists {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  v             Int         @default(0) @map("__v") @ignore
+  completedRole String?
+  guild         String @unique
+  list          List[]
+  listName      String
+  logChannel    String?
+  user          String
+  @@map("lists")
+}
+
+model Notifs {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  v       Int    @default(0) @map("__v") @ignore
+  number  Int
+  server  String
+  trigger String
+  user    String
+  @@map("notifs")
+}
+
+model User {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  discordId String @unique
+  accessToken String
+  refreshToken String
+  avatar String
+  username String
+  discriminator String
+  tag String
+  premium Boolean
+}
+
+model PlayerHistory {
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  cluster        String
+  createdAt      DateTime @db.Date
+  name           String @unique
+  number         String
+  platform       String
+  player_history PlayerHistories[]
+  updatedAt      DateTime @db.Date
+  @@map("player-histories")
+}
+
+model Session {
+id String @id @map("_id")
+expiresAt DateTime @db.Date
+data String
+}
+
+model ServerWatcher {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  v       Int    @default(0) @map("__v") @ignore
+  name    String
+  cluster String
+  number  String
+  lastPlayerCount Int
+  guildId   String
+  messageId String
+  channelId String
+  userId   String
+  webhookId String
+  webhookToken String
+  @@map("server-watchers")
+}
